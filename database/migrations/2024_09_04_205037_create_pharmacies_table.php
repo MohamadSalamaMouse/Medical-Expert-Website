@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('doctor', function (Blueprint $table) {
+        Schema::create('pharmacies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->bigInteger('SSN')->unique();
+            $table->bigInteger('pharmacy_id')->unique();
             $table->string('phone')->unique()->nullable();
-            $table->string('image')->nullable();
-            $table->enum('gender', ['male', 'female', 'other'])->nullable();;
-            $table->date('DOB')->nullable();
-            $table->string('speciality')->nullable();
+            $table->string('address')->nullable();
+            $table->string('loc')->nullable();
+            $table->dateTimeTz('workinghr');
+            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('doctor');
+        Schema::dropIfExists('pharmacies');
     }
 };
