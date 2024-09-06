@@ -18,7 +18,7 @@ class LabLoginController extends Controller
             'email' => ['required', 'email'],
             'password' => [
                 'required',
-               
+
             ],
         ], [
             'email.required' => 'The email field is required.',
@@ -44,7 +44,7 @@ class LabLoginController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Login successful.',
-            'lab' => $lab,
+            'data' => $lab,
             'token' => $token
         ], 200);
     }

@@ -26,7 +26,7 @@ class DoctorLoginController extends Controller
             'password.required' => 'The password field is required.',
             'email.required' => 'The email field is required.',
             'email.email' => 'Please provide a valid email address.',
-            
+
         ]);
 
         // Find the user by SSN
@@ -46,7 +46,7 @@ class DoctorLoginController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Login successful.',
-            'doctor' => $doctor,
+            'data' => $doctor,
             'token' => $doctor->createToken('doctor', ['role:doctor'])->plainTextToken
         ], 200);
     }
