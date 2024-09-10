@@ -31,8 +31,11 @@ class AdminLoginController extends Controller
 
         // Check if the user exists and the password is correct
         if (!$admin || !Hash::check($request->password, $admin->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided email or password is incorrect.'],
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid email or password.',
+                'data' => null,
+                'token' => null,
             ]);
         }
 

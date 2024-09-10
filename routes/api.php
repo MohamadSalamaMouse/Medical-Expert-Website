@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\API\Auth\Admin\AdminForgotPasswordController;
+use App\Http\Controllers\API\Auth\Admin\AdminLoginController;
+use App\Http\Controllers\API\Auth\Admin\AdminResetPasswordController;
 use App\Http\Controllers\API\Auth\Doctor\DoctorEmailVerificationController;
 use App\Http\Controllers\API\Auth\Doctor\DoctorForgotPasswordController;
 use App\Http\Controllers\API\Auth\Doctor\DoctorLoginController;
@@ -15,7 +18,6 @@ use App\Http\Controllers\API\Auth\Pharamcy\PharamcyForgotPasswordController;
 use App\Http\Controllers\API\Auth\Pharamcy\PharamcyResetPasswordController;
 use App\Http\Controllers\API\Auth\Pharamcy\PharmacyLoginController;
 use App\Http\Controllers\API\Auth\Pharamcy\PharmacyRegisterController;
-use App\Http\Controllers\API\Auth\Pharmacy\PharmacyEmailVerificationController;
 use App\Http\Controllers\API\Auth\User\UserEmailVerificationController;
 use App\Http\Controllers\API\Auth\User\UserForgotPasswordController;
 use App\Http\Controllers\API\Auth\User\UserLoginController;
@@ -42,8 +44,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //Doctor Auth Routes
 Route::Post('doctor/register', [DoctorRegisterController::class, 'sign_up']);
 Route::Post('doctor/login', [DoctorLoginController::class, 'login']);
-Route::post('docotor/password/forgot', [DoctorForgotPasswordController::class, 'forgotPassword']);
-Route::post('docotor/password/reset', [DoctorResetPasswordController::class, 'resetPassword']);
+Route::post('doctor/password/forgot', [DoctorForgotPasswordController::class, 'forgotPassword']);
+Route::post('doctor/password/reset', [DoctorResetPasswordController::class, 'resetPassword']);
 //End Doctor Auth Routes
 
 //Lab Auth Routes
@@ -60,6 +62,7 @@ Route::post('patient/password/forgot', [UserForgotPasswordController::class, 'fo
 Route::post('patient/password/reset', [UserResetPasswordController::class, 'resetPassword']);
 //End patient Auth Routes
 
+
 //pharmacy Auth Routes
 
 Route::Post('pharmacy/register', [PharmacyRegisterController::class, 'sign_up']);
@@ -68,6 +71,13 @@ Route::post('pharmacy/password/forgot', [PharamcyForgotPasswordController::class
 Route::post('pharmacy/password/reset', [PharamcyResetPasswordController::class, 'resetPassword']);
 
 //End pharmacy Auth Routes
+
+
+//admin Auth Routes
+Route::Post('admin/login', [AdminLoginController::class, 'login']);
+Route::post('admin/password/forgot', [AdminForgotPasswordController::class, 'forgotPassword']);
+Route::post('admin/password/reset', [AdminResetPasswordController::class, 'resetPassword']);
+//End admin Auth Routes
 
 
 //doctor routes
@@ -93,6 +103,6 @@ Route::middleware(['auth:sanctum', 'type.user'])->prefix('patient')->group(funct
 
 //pharmacy user routes
 Route::middleware(['auth:sanctum', 'type.pharmacy'])->prefix('pharmacy')->group(function () {
-    Route::post('/verify', [PharmacyEmailVerificationController::class, 'verify']);
+    Route::post('/verify', [PharamcyEmailVerificationController::class, 'verify']);
     Route::get('/get-otp', [PharamcyEmailVerificationController::class, 'sendOtp']);
 });

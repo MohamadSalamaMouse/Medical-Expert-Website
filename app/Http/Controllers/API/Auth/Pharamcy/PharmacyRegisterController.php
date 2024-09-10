@@ -18,7 +18,8 @@ class PharmacyRegisterController extends Controller
         // Validation rules with more specific requirements
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:labs,email',
+            'email' => 'required|string|email|max:255|unique:pharmacies,email',
+            'pharmacy_id' => 'required|numeric|unique:pharmacies,pharmacy_id',
             'password' => [
                 'required',
                 'string',
@@ -43,6 +44,7 @@ class PharmacyRegisterController extends Controller
             $pharmacy = Pharmacy::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'pharmacy_id' => $request->pharmacy_id,
                 'password' => Hash::make($request->password)
             ]);
 

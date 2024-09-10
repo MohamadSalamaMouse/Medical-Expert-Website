@@ -31,7 +31,7 @@ class PharamcyEmailVerificationController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'email' => ['required', 'email', 'exists:pharamcies,email'],
+            'email' => ['required', 'email', 'exists:pharmacies,email'],
             'otp' => ['required', 'max:6'],
 
         ]);
