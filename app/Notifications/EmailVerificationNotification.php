@@ -25,7 +25,7 @@ class EmailVerificationNotification extends Notification
         //
         $this->message = 'Please verify your email address!';
         $this->subject = 'Email Verification';
-        $this->fromEmail = 'test@gmail.com';
+        $this->fromEmail = 'medical_support@medicalexpertise.net';
         $this->mailer = 'smtp';
         $this->otp = new Otp();
     }

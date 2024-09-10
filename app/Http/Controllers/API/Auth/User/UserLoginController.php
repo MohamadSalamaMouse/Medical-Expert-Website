@@ -29,11 +29,23 @@ class UserLoginController extends Controller
 
         // Check if the user exists and the password is correct
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'SSN' => ['The provided SSN or password is incorrect.'],
-            ]);
+           return response()->json([
+               'status' => 'error',
+               'message' => 'Invalid SSN or password.',
+               'data' => null,
+               'token' => null
+           ]);
         }
 
+            // Check if the user is verified (assuming you're using email verification)
+    if (!$user->email_verified_at) { // If you're using other verification, adjust this accordingly
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Your account is not verified. Please verify your account to log in.',
+            'data' => null,
+            'token' => null
+        ], 401);
+    }
         // Return a success response with user details and token
         return response()->json([
             'status' => 'success',

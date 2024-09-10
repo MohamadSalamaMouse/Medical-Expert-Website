@@ -37,11 +37,21 @@ class DoctorLoginController extends Controller
 
         // Check if the user exists and the password is correct
         if (!$doctor || !Hash::check($request->password, $doctor->password)) {
-            throw ValidationException::withMessages([
-                'SSNandEmail' => ['The provided SSN and email  or password is incorrect.'],
-            ]);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid SSN or password.',
+                'data' => null,
+                'token' => null
+            ], 401);
         }
-
+        if (!$doctor->email_verified_at) { // If you're using other verification, adjust this accordingly
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Your account is not verified. Please verify your account to log in.',
+                'data' => null,
+                'token' => null
+            ], 401);
+        }
         // Return a success response with user details and token
         return response()->json([
             'status' => 'success',

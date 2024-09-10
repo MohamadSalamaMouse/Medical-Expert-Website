@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('phone')->unique()->nullable();
             $table->string('address')->nullable();
             $table->string('loc')->nullable();
-            $table->dateTimeTz('workinghr');
+            $table->dateTimeTz('workinghr')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

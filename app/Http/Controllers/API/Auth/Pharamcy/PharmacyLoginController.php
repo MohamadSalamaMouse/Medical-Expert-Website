@@ -18,7 +18,7 @@ class PharmacyLoginController extends Controller
             'email' => ['required', 'email'],
             'password' => [
                 'required',
-               
+
             ],
         ], [
             'email.required' => 'The email field is required.',
@@ -39,6 +39,15 @@ class PharmacyLoginController extends Controller
 
         // Generate an authentication token for the user (you can adjust the token scopes)
         $token = $pharmacy->createToken('pharmacy', ['role:pharmacy'])->plainTextToken;
+
+        if (!$pharmacy->email_verified_at) { // If you're using other verification, adjust this accordingly
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Your account is not verified. Please verify your account to log in.',
+                'data' => null,
+                'token' => null
+            ], 401);
+        }
 
         // Return a success response with user details and token
         return response()->json([

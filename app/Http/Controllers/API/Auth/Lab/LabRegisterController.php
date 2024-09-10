@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Auth\Lab;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lab;
+use App\Notifications\EmailVerificationNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -18,7 +19,8 @@ class LabRegisterController extends Controller
         // Validation rules with more specific requirements
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
+            'email' => 'required|string|email|max:255|unique:labs,email',
+            'lab_id' => 'required|numeric|unique:labs,lab_id',
             'password' => [
                 'required',
                 'string',
@@ -43,12 +45,13 @@ class LabRegisterController extends Controller
             $lab = Lab::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'lab_id' => $request->lab_id,
                 'password' => Hash::make($request->password)
             ]);
 
             // Create a personal access token for the doctor with appropriate role
             $token = $lab->createToken('lab', ['role:lab'])->plainTextToken;
-
+            $lab->notify(new EmailVerificationNotification());
             // Return success response with doctor and token
             return response()->json([
                 'status' => 'success',

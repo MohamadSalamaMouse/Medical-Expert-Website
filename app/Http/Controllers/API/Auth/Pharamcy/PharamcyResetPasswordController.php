@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\API\Auth\Lab;
+namespace App\Http\Controllers\API\Auth\Pharamcy;
 
 use App\Http\Controllers\Controller;
-use App\Models\Lab;
+use App\Models\Pharmacy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Ichtrojan\Otp\Otp;
 
-class LabResetPasswordController extends Controller
+class PharamcyResetPasswordController extends Controller
 {
     //
     private $otp;
@@ -27,13 +27,13 @@ class LabResetPasswordController extends Controller
         if (!$otp2->status) {
             return response()->json(['error' => $otp2], 401);
         }
-        $lab = Lab::where('email', $request->email)->first();
-        $lab->update(
+        $pharamcy = Pharmacy::where('email', $request->email)->first();
+        $pharamcy->update(
             [
                 'password' => Hash::make($request->password)
             ]
         );
-        $lab->tokens()->delete();
+        $pharamcy->tokens()->delete();
 
         return response()->json([
             'status' => 'success',
