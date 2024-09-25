@@ -24,7 +24,7 @@ class DoctorRegisterController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'SSN' => 'required|string|max:255|unique:doctors,SSN',
-            'email' => 'required|string|email|max:255|unique:users,email',
+            'email' => 'required|string|email|max:255|unique:doctors,email',
             'password' => [
                 'required',
                 'string',
@@ -54,14 +54,13 @@ class DoctorRegisterController extends Controller
             ]);
 
             // Create a personal access token for the doctor with appropriate role
-            $token = $doctor->createToken('doctor', ['role:doctor'])->plainTextToken;
+
             $doctor->notify(new EmailVerificationNotification());
             // Return success response with doctor and token
             return response()->json([
                 'status' => 'success',
-                'message' => 'Registration successful.',
-                'data' => $doctor,
-                'token' => $token
+                'message' => 'Registration successful please verify your email for login.',
+
             ], 201);
         } catch (\Exception $e) {
             // Handle unexpected errors

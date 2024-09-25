@@ -19,7 +19,13 @@ class UserEmailVerificationController extends Controller
 
     public function sendOtp(Request $request)
     {
-        $request->user()->notify(new EmailVerificationNotification());
+        $request->validate([
+            'email' => ['required', 'email', 'exists:users,email'],
+
+
+        ]);
+        $user = User::where('email', $request->email)->first();
+        $user->notify(new EmailVerificationNotification());
         return response()->json([
             'status' => 'success',
             'message' => 'OTP sent successfully.',

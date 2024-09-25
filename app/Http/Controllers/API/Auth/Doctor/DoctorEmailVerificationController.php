@@ -20,7 +20,13 @@ class DoctorEmailVerificationController extends Controller
     //
     public function sendOtp(Request $request)
     {
-        $request->user()->notify(new EmailVerificationNotification());
+        $request->validate([
+            'email' => ['required', 'email', 'exists:doctors,email'],
+
+
+        ]);
+        $doctor = Doctor::where('email', $request->email)->first();
+        $doctor->notify(new EmailVerificationNotification());
         return response()->json([
             'status' => 'success',
             'message' => 'OTP sent successfully.',
@@ -51,7 +57,6 @@ class DoctorEmailVerificationController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Email verified successfully.',
-            
         ], 200);
     }
 }

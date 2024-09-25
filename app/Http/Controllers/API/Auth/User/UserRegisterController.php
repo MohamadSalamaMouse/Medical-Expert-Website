@@ -49,14 +49,13 @@ class UserRegisterController extends Controller
             ]);
 
             // Create a personal access token for the doctor with appropriate role
-            $token = $user->createToken('user', ['role:user'])->plainTextToken;
+
             $user->notify(new EmailVerificationNotification());
             // Return success response with doctor and token
             return response()->json([
                 'status' => 'success',
-                'message' => 'Registration successful.',
-                'data' => $user,
-                'token' => $token
+                'message' => 'Registration successful and please verify your email for login.',
+
             ], 201);
         } catch (\Exception $e) {
             // Handle unexpected errors

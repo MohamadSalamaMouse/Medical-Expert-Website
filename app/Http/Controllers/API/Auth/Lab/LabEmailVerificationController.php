@@ -21,7 +21,14 @@ class LabEmailVerificationController extends Controller
     //
     public function sendOtp(Request $request)
     {
-        $request->user()->notify(new EmailVerificationNotification());
+        $request->validate([
+            'email' => ['required', 'email', 'exists:labs,email'],
+
+
+        ]);
+
+        $lab = Lab::where('email', $request->email)->first();
+        $lab->notify(new EmailVerificationNotification());
         return response()->json([
             'status' => 'success',
             'message' => 'OTP sent successfully.',
@@ -48,10 +55,12 @@ class LabEmailVerificationController extends Controller
 
         // Find the user by email
         $lab = Lab::where('email', $request->email)->first();
+
         $lab->update(['email_verified_at' => now()]);
         return response()->json([
             'status' => 'success',
             'message' => 'Email verified successfully.',
+
 
         ], 200);
     }

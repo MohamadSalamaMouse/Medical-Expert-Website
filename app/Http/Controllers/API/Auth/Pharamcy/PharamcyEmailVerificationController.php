@@ -20,7 +20,13 @@ class PharamcyEmailVerificationController extends Controller
     //
     public function sendOtp(Request $request)
     {
-        $request->user()->notify(new EmailVerificationNotification());
+        $request->validate([
+            'email' => ['required', 'email', 'exists:pharmacies,email'],
+
+
+        ]);
+        $pharamcy = Pharmacy::where('email', $request->email)->first();
+        $pharamcy->notify(new EmailVerificationNotification());
         return response()->json([
             'status' => 'success',
             'message' => 'OTP sent successfully.',
