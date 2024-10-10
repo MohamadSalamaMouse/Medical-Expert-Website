@@ -20,10 +20,13 @@ class LabLoginController extends Controller
                 'required',
 
             ],
+
         ], [
-            'email.required' => 'The email field is required.',
-            'email.email' => 'Please provide a valid email address.',
-            'password.required' => 'The password field is required.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Invalid email format, the valid format is like “example@example.com”.',
+            'password.required' => 'Password is required.',
+            'password.min' => 'The password must be at least 8 characters.', // Custom message for min length
+
 
         ]);
 

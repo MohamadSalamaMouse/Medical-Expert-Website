@@ -12,34 +12,28 @@ class DoctorLoginController extends Controller
 {
     public function login(Request $request)
     {
-        // Validate the request data with custom error messages
         $request->validate([
-            'SSN' => ['required'],
-            "email" => ['required', 'email'],
+            'email' => ['required', 'email'],
             'password' => [
                 'required',
-
             ],
-
         ], [
-            'SSN.required' => 'The SSN field is required.',
-            'password.required' => 'The password field is required.',
             'email.required' => 'The email field is required.',
             'email.email' => 'Please provide a valid email address.',
+            'password.required' => 'The password field is required.',
+            'password.min' => 'The password must be at least 8 characters.', // Custom message for min length
 
         ]);
 
-        // Find the user by SSN
-        $doctor = Doctor::where('SSN', $request->SSN)
-            ->where('email', $request->email)
-            ->first();
+        // Attempt to find the user by email
+        $doctor = Doctor::where('email', $request->email)->first();
 
 
         // Check if the user exists and the password is correct
         if (!$doctor || !Hash::check($request->password, $doctor->password)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Invalid SSN or password.',
+                'message' => 'Invalid email or password.',
                 'data' => null,
                 'token' => null
             ], 401);

@@ -22,8 +22,8 @@ class DoctorRegisterController extends Controller
     {
         // Validation rules with more specific requirements
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'SSN' => 'required|string|max:255|unique:doctors,SSN',
+            'name' => 'required|string|min:5|max:29',
+            'SSN' => 'required|string|max:255|digits:14|unique:doctors,SSN',
             'email' => 'required|string|email|max:255|unique:doctors,email',
             'password' => [
                 'required',
@@ -32,8 +32,18 @@ class DoctorRegisterController extends Controller
                 'confirmed',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/',
             ],
-
+        ], [
+            'name.required' => 'The name field is required.',
+            'SSN.required' => 'The Syndicate Id field is required. Please enter your SSN.',
+            'SSN.digits' => 'The Syndicate Id must be exactly 14 digits.',
+            'SSN.unique' => 'This Syndicate Id is already registered. Please use a different one.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Invalid email format. The valid format is like “example@example.com”.',
+            'email.unique' => 'This patient email already has an account, please log in.',
+            'password.required' => 'The password field is required.',
         ]);
+
+
 
         // Handle validation errors
         if ($validator->fails()) {

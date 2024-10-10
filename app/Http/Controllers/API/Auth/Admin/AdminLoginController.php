@@ -23,6 +23,9 @@ class AdminLoginController extends Controller
             'email.required' => 'The email field is required.',
             'email.email' => 'Please provide a valid email address.',
             'password.required' => 'The password field is required.',
+            'password.min' => 'The password must be at least 8 characters.', // Custom message for min length
+
+
 
         ]);
 

@@ -17,9 +17,9 @@ class UserRegisterController extends Controller
     {
         // Validation rules with more specific requirements
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|min:5|max:29',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'SSN' => 'required|numeric|unique:users,SSN',
+            'SSN' => 'required|numeric|digits:14|unique:users,SSN',
             'password' => [
                 'required',
                 'string',
@@ -27,6 +27,15 @@ class UserRegisterController extends Controller
                 'confirmed',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/',
             ],
+        ],[
+                'name.required' => 'The name field is required.',
+                'SSN.required' => 'The National Id field is required. Please enter your SSN.',
+                'SSN.digits' => 'The National Id must be exactly 14 digits.',
+                'SSN.unique' => 'This National Id is already registered. Please use a different one.',
+                'email.required' => 'Email is required.',
+                'email.email' => 'Invalid email format. The valid format is like “example@example.com”.',
+                'email.unique' => 'This patient email already has an account, please log in.',
+                'password.required' => 'The password field is required.',
 
         ]);
 

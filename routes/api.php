@@ -23,6 +23,8 @@ use App\Http\Controllers\API\Auth\User\UserForgotPasswordController;
 use App\Http\Controllers\API\Auth\User\UserLoginController;
 use App\Http\Controllers\API\Auth\User\UserRegisterController;
 use App\Http\Controllers\API\Auth\User\UserResetPasswordController;
+use App\Http\Controllers\Api\Doctor\DoctorController;
+use App\Http\Controllers\Api\DoctorProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -86,6 +88,16 @@ Route::Post('admin/login', [AdminLoginController::class, 'login']);
 Route::post('admin/password/forgot', [AdminForgotPasswordController::class, 'forgotPassword']);
 Route::post('admin/password/reset', [AdminResetPasswordController::class, 'resetPassword']);
 //End admin Auth Routes
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/profile/show', [DoctorProfileController::class, 'showProfile']);
+    Route::patch('/profile/update', [DoctorProfileController::class, 'updateProfile']);
+    Route::post('/profile/setup', [DoctorProfileController::class, 'storeProfile']);
+
+    Route::get('/doctor/patients', [DoctorController::class, 'viewPatients']);
+
+
+});
 
 
 

@@ -14,6 +14,10 @@ class DoctorForgotPasswordController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
+        ], [
+            'email.required' => 'Email is required.',
+            'email.email' => 'Invalid email format, the valid format is like “example@example.com”.',
+
 
         ]);
         $input = $request->only('email');

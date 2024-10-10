@@ -14,8 +14,12 @@ class LabForgotPasswordController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
+         ]   , [
+                'email.required' => 'Email is required.',
+                'email.email' => 'Invalid email format, the valid format is like “example@example.com”.',
+            ]);
 
-        ]);
+
         $input = $request->only('email');
         $user = Lab::where('email', $input)->first();
         $user->notify(new ResetPasswordNotification());
