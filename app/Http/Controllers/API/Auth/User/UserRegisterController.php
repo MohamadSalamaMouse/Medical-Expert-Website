@@ -13,25 +13,29 @@ use Illuminate\Support\Facades\Validator;
 
 class UserRegisterController extends Controller
 {
+
     public function sign_up(Request $request)
     {
+        //dd($request->all());
         // Validation rules with more specific requirements
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:5|max:29',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'SSN' => 'required|numeric|digits:14|unique:users,SSN',
+            'user_id' => 'required|numeric|digits:14|unique:users,user_id',
             'password' => [
                 'required',
                 'string',
                 'min:8',
                 'confirmed',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/',
+
             ],
+            'user_doctor_id' => 'nullable|numeric|digits:14'
         ],[
                 'name.required' => 'The name field is required.',
-                'SSN.required' => 'The National Id field is required. Please enter your SSN.',
-                'SSN.digits' => 'The National Id must be exactly 14 digits.',
-                'SSN.unique' => 'This National Id is already registered. Please use a different one.',
+                'user_id.required' => 'The National Id field is required. Please enter your ID.',
+                'user_id.digits' => 'The National Id must be exactly 14 digits.',
+                'user_id.unique' => 'This National Id is already registered. Please use a different one.',
                 'email.required' => 'Email is required.',
                 'email.email' => 'Invalid email format. The valid format is like “example@example.com”.',
                 'email.unique' => 'This patient email already has an account, please log in.',
@@ -49,24 +53,26 @@ class UserRegisterController extends Controller
         }
 
         try {
-            // Create a new doctor with hashed password
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'SSN' => $request->SSN,
-                'password' => Hash::make($request->password)
+                'user_id' => $request->user_id,
+                'password' => Hash::make($request->password),
+                'user_doctor_id' => $request->user_doctor_id,
             ]);
 
-            // Create a personal access token for the doctor with appropriate role
+
 
             $user->notify(new EmailVerificationNotification());
-            // Return success response with doctor and token
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Registration successful and please verify your email for login.',
 
             ], 201);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             // Handle unexpected errors
             return response()->json([
                 'status' => 'error',
@@ -74,5 +80,6 @@ class UserRegisterController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+
     }
 }

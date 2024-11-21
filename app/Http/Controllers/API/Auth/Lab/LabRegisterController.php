@@ -37,7 +37,7 @@ class LabRegisterController extends Controller
 
         'email.required' => 'Email is required.',
         'email.email' => 'Invalid email format, the valid format is like “example@example.com”.',
-        'email.unique' => 'This patient email already has an account, please log in.',
+        'email.unique' => 'This Lab email already has an account, please log in.',
 
         'lab_id.required' => 'Syndicate ID is required.',
         'lab_id.numeric' => 'Invalid Syndicate ID, please check the format.',

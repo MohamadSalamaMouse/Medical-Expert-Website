@@ -14,56 +14,26 @@ class UserLoginController extends Controller
     public function login(Request $request)
     {
         // Validate the request data with custom error messages
-        // $request->validate([
-        //     'SSN' => ['required', 'digits:14'],
-        //     'password' => [
-        //         'required' ],
-
-        // ], [
-        //     'SSN.required' => 'The SSN field is required.',
-        //     'SSN.digits' => 'The SSN must be exactly 14 digits.',
-        //     'password.required' => 'The password field is required.']);
-
-        // // Find the user by SSN
-        // $user = User::where('SSN', $request->SSN)->first();
         $request->validate([
             'email' => ['required', 'email'],
             'password' => [
-                'required',
+                'required' ],
 
-            ],
         ], [
             'email.required' => 'The email field is required.',
             'email.email' => 'Please provide a valid email address.',
-            'password.required' => 'The password field is required.',
-            'password.min' => 'The password must be at least 8 characters.', // Custom message for min length
+            'password.required' => 'The password field is required.']);
 
-
-
-        ]);
-
-        // Attempt to find the user by email
+        // Find the user by SSN
         $user = User::where('email', $request->email)->first();
 
         // Check if the user exists and the password is correct
         if (!$user || !Hash::check($request->password, $user->password)) {
-           return response()->json([
-               'status' => 'error',
-               'message' => 'Invalid email or password.',
-               'data' => null,
-               'token' => null
-           ]);
+            throw ValidationException::withMessages([
+                'email' => ['The provided email or password is incorrect.'],
+            ]);
         }
 
-            // Check if the user is verified (assuming you're using email verification)
-    if (!$user->email_verified_at) { // If you're using other verification, adjust this accordingly
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Your account is not verified. Please verify your account to log in.',
-            'data' => null,
-            'token' => null
-        ], 401);
-    }
         // Return a success response with user details and token
         return response()->json([
             'status' => 'success',
@@ -71,5 +41,4 @@ class UserLoginController extends Controller
             'customer' => $user,
             'token' => $user->createToken('user', ['role:user'])->plainTextToken
         ], 200);
-    }
-}
+    }}

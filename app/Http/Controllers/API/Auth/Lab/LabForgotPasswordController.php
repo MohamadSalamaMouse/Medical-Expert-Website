@@ -12,18 +12,15 @@ class LabForgotPasswordController extends Controller
     //
     public function forgotPassword(Request $request)
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-         ]   , [
-                'email.required' => 'Email is required.',
-                'email.email' => 'Invalid email format, the valid format is like “example@example.com”.',
-            ]);
 
+        $lab = Lab::where('email', $request->email)->first();
 
-        $input = $request->only('email');
-        $user = Lab::where('email', $input)->first();
-        $user->notify(new ResetPasswordNotification());
-        $success['succees'] = true;
-        return response()->json($success, 200);
+        if (!$lab) {
+            return response()->json(['error' => 'Lab not found.'], 404);
+        }
+
+        $lab->notify(new ResetPasswordNotification());
+
+        return response()->json(['success' => true, 'message' => 'Password reset code sent.'], 200);
     }
 }

@@ -6,24 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Models\Doctor;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class DoctorForgotPasswordController extends Controller
 {
     //
     public function forgotPassword(Request $request)
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-        ], [
-            'email.required' => 'Email is required.',
-            'email.email' => 'Invalid email format, the valid format is like “example@example.com”.',
+        $doctor = Doctor::where('email', $request->email)->first();
+
+        if (!$doctor) {
+            return response()->json(['error' => 'Doctor not found.'], 404);
+        }
+
+        $doctor->notify(new ResetPasswordNotification());
 
 
-        ]);
-        $input = $request->only('email');
-        $user = Doctor::where('email', $input)->first();
-        $user->notify(new ResetPasswordNotification());
-        $success['succees'] = true;
-        return response()->json($success, 200);
+        return response()->json(['success' => true, 'message' => 'Password reset OTP sent.'], 200);
+
+
+
     }
+
 }

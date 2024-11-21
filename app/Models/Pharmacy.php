@@ -13,8 +13,11 @@ class Pharmacy extends Model
     use HasApiTokens;
     use Notifiable;
 
+    protected $primaryKey = 'pharmacy_id';
+    public $incrementing = false;
+
     protected $guarded = [];
-    protected $table = 'pharmacies'; 
+    protected $table = 'pharmacies';
     protected $hidden = [
         'password',
         'remember_token',

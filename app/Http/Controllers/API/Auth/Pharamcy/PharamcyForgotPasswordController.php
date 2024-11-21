@@ -12,17 +12,15 @@ class PharamcyForgotPasswordController extends Controller
     //
     public function forgotPassword(Request $request)
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-        ], [
-                'email.required' => 'Email is required.',
-                'email.email' => 'Invalid email format, the valid format is like “example@example.com”.',
 
-        ]);
-        $input = $request->only('email');
-        $user = Pharmacy::where('email', $input)->first();
-        $user->notify(new ResetPasswordNotification());
-        $success['succees'] = true;
-        return response()->json($success, 200);
+        $pharmacy = Pharmacy::where('email', $request->email)->first();
+
+        if (!$pharmacy) {
+            return response()->json(['error' => 'Pharmacy not found.'], 404);
+        }
+
+        $pharmacy->notify(new ResetPasswordNotification());
+
+        return response()->json(['success' => true, 'message' => 'Password reset code sent.'], 200);
     }
 }

@@ -21,76 +21,57 @@ class UserResetPasswordController extends Controller
     }
     public function resetPassword(Request $request)
     {
+        // Validate the request inputs
         $request->validate([
             'email' => ['required', 'email'],
             'otp' => ['required', 'max:6'],
             'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/'],
+        ],[
 
-        ]);
+                        'otp.required' => 'OTP code is required.',
+                        'otp.max' => 'Invalid OTP code, it should be 6 characters long.',
+                        'password.required' => 'Password is required.',
+                        'password.min' => 'The password must be at least 8 characters.',
+                        'password.regex' => 'The password must contain an uppercase letter "A-Z", lowercase letter "a-z", symbols "e.g. @, #" and numbers "1-9".',
+
+                ]);
+
+
+        // Validate the OTP
         $otp2 = $this->otp->validate($request->email, $request->otp);
+
+        // Custom handling of OTP validation response
         if (!$otp2->status) {
-            return response()->json(['error' => $otp2], 401);
+            // OTP has a status key, so check why it failed
+            if ($otp2->message === 'OTP is incorrect') {
+                return response()->json(['error' => 'OTP is incorrect.'], 401); // Mismatch or wrong OTP
+            } elseif ($otp2->message === 'OTP has expired') {
+                return response()->json(['error' => 'OTP is invalid or expired.'], 401); // Expired or invalid OTP
+            } else {
+                return response()->json(['error' => 'Invalid OTP code.'], 401); // General error if no clear message is provided
+            }
         }
 
+        // Check if the user exists
         $user = User::where('email', $request->email)->first();
-        $user->update(
-            [
-                'password' => Hash::make($request->password)
-            ]
-        );
+        if (!$user) {
+            return response()->json(['error' => 'User not found.'], 404);
+        }
+
+        // Update the user's password
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        // Delete any existing tokens for the user
         $user->tokens()->delete();
 
+        // Return a success response
         return response()->json([
             'status' => 'success',
             'message' => 'Password reset successfully. Please login.',
-
         ], 200);
     }
 }
 
 
-// public function resetPassword(Request $request)
-// {
-//     // Validate the OTP and new password
-//     $request->validate([
-//         'otp' => ['required', 'max:6'],
-//         'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/'],
-//     ],[
-
-//             'otp.required' => 'OTP code is required.',
-//             'otp.max' => 'Invalid OTP code, it should be 6 characters long.',
-//             'password.required' => 'Password is required.',
-//             'password.min' => 'The password must be at least 8 characters.',
-//             'password.regex' => 'The password must contain an uppercase letter "A-Z", lowercase letter "a-z", symbols "e.g. @, #" and numbers "1-9".',
-
-//     ]);
-
-//     // Validate the OTP without requiring the email
-//     $otpStatus = $this->otp->validate($request->otp);
-//     if (!$otpStatus->status) {
-//         return response()->json(['error' => 'Invalid OTP. Please try again.'], 401);
-//     }
-
-//     // Find the user associated with the OTP
-//     $user = User::where('otp', $request->otp)->first(); // Assuming your User model has an 'otp' column
-
-//     if (!$user) {
-//         return response()->json(['error' => 'User not found.'], 404);
-//     }
-
-//     // Update the user's password
-//     $user->update([
-//         'password' => Hash::make($request->password),
-//         'otp' => null // Optionally clear the OTP field after use
-//     ]);
-
-//     // Revoke any existing tokens
-//     $user->tokens()->delete();
-
-//     return response()->json([
-//         'status' => 'success',
-//         'message' => 'Password reset successfully. Please login.',
-//     ], 200);
-// }
-
-// }

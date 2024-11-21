@@ -3,12 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -16,8 +17,22 @@ class User extends Authenticatable
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
+     *
      */
-    protected $guarded = [];
+    protected $primaryKey = 'user_id';
+    public $incrementing = false; 
+    protected $keyType = 'bigInteger';
+
+    protected $fillable = [ 'name', 'email','user_id', 'password'];
+
+    protected $guarded = [
+
+
+        // 'dob',
+        // 'gender',
+        // 'last_visit',
+        // 'user_doctor_id',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -37,4 +52,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class);
+    }
 }

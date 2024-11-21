@@ -23,7 +23,7 @@ class DoctorRegisterController extends Controller
         // Validation rules with more specific requirements
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:5|max:29',
-            'SSN' => 'required|string|max:255|digits:14|unique:doctors,SSN',
+            'doctor_id' => 'required|string|max:255|digits:14|unique:doctors,doctor_id',
             'email' => 'required|string|email|max:255|unique:doctors,email',
             'password' => [
                 'required',
@@ -34,12 +34,12 @@ class DoctorRegisterController extends Controller
             ],
         ], [
             'name.required' => 'The name field is required.',
-            'SSN.required' => 'The Syndicate Id field is required. Please enter your SSN.',
-            'SSN.digits' => 'The Syndicate Id must be exactly 14 digits.',
-            'SSN.unique' => 'This Syndicate Id is already registered. Please use a different one.',
+            'doctor_id.required' => 'The Syndicate Id field is required. Please enter your ID.',
+            'doctor_id.digits' => 'The Syndicate Id must be exactly 14 digits.',
+            'doctor_id.unique' => 'This Syndicate Id is already registered. Please use a different one.',
             'email.required' => 'Email is required.',
             'email.email' => 'Invalid email format. The valid format is like “example@example.com”.',
-            'email.unique' => 'This patient email already has an account, please log in.',
+            'email.unique' => 'This doctor email already has an account, please log in.',
             'password.required' => 'The password field is required.',
         ]);
 
@@ -59,7 +59,7 @@ class DoctorRegisterController extends Controller
             $doctor = Doctor::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'SSN' => $request->SSN,
+                'doctor_id' => $request->doctor_id,
                 'password' => Hash::make($request->password)
             ]);
 

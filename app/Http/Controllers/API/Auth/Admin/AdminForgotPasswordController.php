@@ -12,18 +12,26 @@ class AdminForgotPasswordController extends Controller
     //
     public function forgotPassword(Request $request)
     {
+        // Validate email input
         $request->validate([
             'email' => ['required', 'email'],
         ], [
             'email.required' => 'Email is required.',
-            'email.email' => 'Invalid email format, the valid format is like “example@example.com”.',
-
-
+            'email.email' => 'Invalid email format.',
         ]);
-        $input = $request->only('email');
-        $user = Admin::where('email', $input)->first();
-        $user->notify(new ResetPasswordNotification());
-        $success['succees'] = true;
-        return response()->json($success, 200);
+
+        // Find admin by email
+        $admin = Admin::where('email', $request->email)->first();
+
+        // Check if the admin exists
+        if (!$admin) {
+            return response()->json(['error' => 'Admin not found.'], 404);
+        }
+
+        // Send reset password notification
+        $admin->notify(new ResetPasswordNotification());
+
+        return response()->json(['success' => true, 'message' => 'Password reset OTP sent.'], 200);
+
     }
 }

@@ -31,22 +31,39 @@ class PharamcyResetPasswordController extends Controller
                 'password.regex' => 'The password must contain an uppercase letter "A-Z", lowercase letter "a-z", symbols "e.g. @, #" and numbers "1-9".',
 
         ]);
+       // Validate the OTP
         $otp2 = $this->otp->validate($request->email, $request->otp);
-        if (!$otp2->status) {
-            return response()->json(['error' => $otp2], 401);
-        }
-        $pharamcy = Pharmacy::where('email', $request->email)->first();
-        $pharamcy->update(
-            [
-                'password' => Hash::make($request->password)
-            ]
-        );
-        $pharamcy->tokens()->delete();
 
+       // Custom handling of OTP validation response
+        if (!$otp2->status) {
+            // OTP has a status key, so check why it failed
+            if ($otp2->message === 'OTP is incorrect') {
+                return response()->json(['error' => 'OTP is incorrect.'], 401); // Mismatch or wrong OTP
+            } elseif ($otp2->message === 'OTP has expired') {
+                return response()->json(['error' => 'OTP is invalid or expired.'], 401); // Expired or invalid OTP
+            } else {
+                return response()->json(['error' => 'Invalid OTP code.'], 401); // General error if no clear message is provided
+            }
+        }
+
+       // Check if the pharmacy exists
+        $pharmacy = Pharmacy::where('email', $request->email)->first();
+        if (!$pharmacy ) {
+            return response()->json(['error' => 'Pharmacy not found.'], 404);
+        }
+
+        // Update the user's password
+        $pharmacy ->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        // Delete any existing tokens for the user
+        $pharmacy ->tokens()->delete();
+
+        // Return a success response
         return response()->json([
             'status' => 'success',
             'message' => 'Password reset successfully. Please login.',
-
         ], 200);
     }
 }

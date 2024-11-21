@@ -27,7 +27,7 @@ class PharmacyRegisterController extends Controller
                 'confirmed',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/',
             ],
-            'password_confirmation' => 'required|string|same:password', // Ensure confirmation matches
+            'password_confirmation' => 'required|string|same:password', 
     ], [
         'name.required' => 'Name is required.',
         'name.min' => 'The name must be more than 4 letters and less than 30 letters.',
@@ -35,7 +35,7 @@ class PharmacyRegisterController extends Controller
 
         'email.required' => 'Email is required.',
         'email.email' => 'Invalid email format, the valid format is like “example@example.com”.',
-        'email.unique' => 'This patient email already has an account, please log in.',
+        'email.unique' => 'This pharmacy email already has an account, please log in.',
 
         'pharmacy_id.required' => 'Syndicate ID is required.',
         'pharmacy_id.numeric' => 'Invalid Syndicate ID, please check the format.',

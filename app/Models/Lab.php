@@ -12,6 +12,7 @@ class Lab extends Model
     use HasFactory;
     use HasApiTokens;
     use Notifiable;
+    protected $primaryKey = 'lab_id';
     protected $guarded = [];
     protected $hidden = [
         'password',
